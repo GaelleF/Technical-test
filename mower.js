@@ -1,22 +1,36 @@
-/*const input = require('./input.txt')
-console.log(input)*/
-const input = `5 5
-    1 2 N
-    LFLFLFLFF
-    3 3 E
-    FFRFFRFRRF`
+
+const fs = require('fs')
+const util = require('util')
+
+const writeFile = util.promisify(fs.writeFile)
+const readFile = util.promisify(fs.readFile)
+
+let instructions = []
+let size = []
+let mowersPosition = []
+let moveInstruction = []
 
 const cardinal = ['N','E','S','W']
 
+
+readFile('input.txt', 'utf-8')
+  .then(data => {
+    readInstructions(data)
+    const mowersOutput =  executeInstructions().join('\n')
+    return writeFile('output.txt',mowersOutput, 'utf8' ) 
+  })
+
 // read input instructions
-const instructions = input.split('\n').map(instruction => instruction.trim().split(' '))
-const size = instructions[0]
-const mowersPosition = instructions.filter((instruction, index) => index%2 !== 0)
+const readInstructions = (input) => {
+  instructions = input.split('\n').filter(instruction => instruction !== '').map(instruction => instruction.trim().split(' '))
+  size = instructions[0]
+  mowersPosition = instructions.filter((instruction, index) => index%2 !== 0)
   .map(mower=>mower.map((mowerCoord, index )=> {
     if (index === 0 || index === 1) {return Number(mowerCoord)}
     else {return mowerCoord}
   }))
-const moveInstruction = instructions.filter((instruction, index) => (index%2 === 0 && index !== 0))
+  moveInstruction = instructions.filter((instruction, index) => (index%2 === 0 && index !== 0))
+}
 
 // functions move
 const rotateR = (mower) => mower.map((mowerCoord, index) => {
@@ -58,14 +72,16 @@ const action = (mower, move) => {
 }
 
 // execute instructions for each mowers
-const mowersFinalPosition= mowersPosition.map((mower,index) => {
-  let mowerMove = mower
-  moveInstruction[index][0].split('').forEach(instruction => {
+const executeInstructions = () => {
+  const mowersFinalPosition= mowersPosition.map((mower,index) => {
+    let mowerMove = mower
+    moveInstruction[index][0].split('').forEach(instruction => {
       return mowerMove = action(mowerMove,instruction)
-  })
-  return mowerMove
-})
-
-for(mower of mowersFinalPosition) {
-  console.log(mower.join(' '))
+    })
+    return mowerMove
+  }) 
+  for(mower of mowersFinalPosition) {
+    console.log(mower.join(' '))
+  }
+  return mowersFinalPosition.map(mower => mower.join(' '))
 }
