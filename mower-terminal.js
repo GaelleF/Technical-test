@@ -1,5 +1,4 @@
-/*const input = require('./input.txt')
-console.log(input)*/
+
 const input = `5 5
     1 2 N
     LFLFLFLFF

@@ -12,7 +12,6 @@ let moveInstruction = []
 
 const cardinal = ['N','E','S','W']
 
-
 readFile('input.txt', 'utf-8')
   .then(data => {
     readInstructions(data)
